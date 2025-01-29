@@ -1,7 +1,7 @@
 import pygame, math, numpy
 
 class Enemy:
-    def __init__(self, map):
+    def __init__(self, map, gridwidth, gridheight):
         self.following = "2"
         self.xd = 0
         self.yd = 0
@@ -15,6 +15,11 @@ class Enemy:
         self.x = x
         self.y = y
         self.getDirection(map)
+        
+        self.gridwidth = gridwidth
+        self.gridheight = gridheight
+
+        self.alive = True
 
     def getPos(self, index, map):
         return [index % len(map[0]), index // len(map[0])]
@@ -42,6 +47,7 @@ class Enemy:
         self.yd = round(self.yd/mag)
     
     def update(self, map, health, enemies):
+        if (not self.alive): return enemies.remove(self)
         i = self.getIndex(map)
         index = -1
         try:
@@ -49,6 +55,7 @@ class Enemy:
             index = flat.index(self.following)
         except:
             health[0] -= 15
+            self.alive = False
             enemies.remove(self)
         if (i == index):
             self.following = str(int(self.following)+1)
@@ -57,4 +64,6 @@ class Enemy:
         self.x += self.xd
         self.y += self.yd
 
+    def renderPosition(self):
 
+        return [self.x*self.gridwidth + self.gridwidth*0.25, self.y*self.gridheight + self.gridheight*0.25]
